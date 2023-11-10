@@ -6,6 +6,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
+from matplotlib import pyplot as plt
 
 import cv2
 import smtplib
@@ -59,7 +60,7 @@ def pass_captcha():
             dy = y
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
     
-    # print(dx, dy)
+    print(dx, dy)
     
     # plt.imshow(image)
     # plt.show()
@@ -72,10 +73,9 @@ def pass_captcha():
 
 
 if __name__ == '__main__':
-
     # 填入信息
-    username = ''
-    password = ''
+    username = '22210240435'
+    password = 'Enriqueliu1999@'
     try:
         delta = sys.argv[1]
     except:
@@ -87,13 +87,13 @@ if __name__ == '__main__':
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument('--window-size=4000,1600')
-    s = Service('/usr/bin/chromedriver')
-    browser = webdriver.Chrome(service=s, options=chrome_options)
+    s = Service('/home/videt/Downloads/chromedriver-linux64/chromedriver')
+    browser = webdriver.Chrome(options=chrome_options)
 
     # 正大标场
-    browser.get("https://elife.fudan.edu.cn/public/front/loadOrderForm_ordinary2.htm?type=resource&serviceContent.id=2c9c486e4f821a19014f82418a900004")
+    # browser.get("https://elife.fudan.edu.cn/public/front/loadOrderForm_ordinary2.htm?type=resource&serviceContent.id=2c9c486e4f821a19014f82418a900004")
     # 江湾
-    # browser.get("https://elife.fudan.edu.cn/public/front/loadOrderForm_ordinary2.htm?type=resource&serviceContent.id=8aecc6ce749544fd01749a31a04332c2")
+    browser.get("https://elife.fudan.edu.cn/public/front/loadOrderForm_ordinary2.htm?type=resource&serviceContent.id=8aecc6ce749544fd01749a31a04332c2")
 
     browser.find_element(By.CLASS_NAME, 'xndl').click()
     browser.find_element(By.NAME, 'username').send_keys(username)
@@ -107,6 +107,12 @@ if __name__ == '__main__':
     print('=================================\n预约日期:', reserve_day.strftime("%Y-%m-%d"))
     print('当前时间:', datetime.now())
     
+    current_time = datetime.now()
+    while True:
+        current_time = datetime.now()
+        if current_time.hour == 7:
+            break
+        
     browser.execute_script("javascript:goToDate('" + reserve_day.strftime("%Y-%m-%d") + "');")
 
     try:
@@ -120,6 +126,7 @@ if __name__ == '__main__':
     flag = True
     for block in blocks[::-1]:
         date_data = block.text
+        print(date_data)
         try:
             block.find_element(By.TAG_NAME, 'img').click()
             browser.find_element(By.ID, 'verify_button').click()
@@ -130,7 +137,7 @@ if __name__ == '__main__':
         while True:
             pass_captcha()
             try:
-                btn = WebDriverWait(browser, 1000).until(EC.element_to_be_clickable((By.ID, 'btn_sub')))
+                btn = WebDriverWait(browser, 4000).until(EC.element_to_be_clickable((By.ID, 'btn_sub')))
                 btn.click()
                 try:
                     browser.switch_to.alert.accept()
